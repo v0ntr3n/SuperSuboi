@@ -46,16 +46,17 @@ if not exist "requirements.txt" (
     echo [ERROR] requirements.txt is missing.
     goto failed
 )
-if not exist "%VENV_PY%" (
-    call :find_python
-    if errorlevel 1 goto no_python
-    echo [INFO] Creating .venv...
-    %BOOT_PY% -m venv "%VENV_DIR%"
-    if errorlevel 1 (
-        echo [ERROR] Could not create the virtual environment.
-        goto failed
-    )
+if exist "%VENV_PY%" goto install_deps
+call :find_python
+if errorlevel 1 goto no_python
+echo [INFO] Creating .venv...
+%BOOT_PY% -m venv "%VENV_DIR%"
+if errorlevel 1 (
+    echo [ERROR] Could not create the virtual environment.
+    goto failed
 )
+
+:install_deps
 "%VENV_PY%" -c "import sys; print('Python', sys.version.split()[0])"
 if errorlevel 1 (
     echo [ERROR] The local .venv is broken. Delete .venv and retry.
