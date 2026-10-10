@@ -159,7 +159,7 @@ ScrollablePage {
                 ComboBox{
                     Layout.preferredWidth:column.width
                     model: zapret_model
-                    currentIndex: backend.get_int_from_config("GOODCHECK", "strategies")
+                    currentIndex: Math.max(0, Math.min(zapret_model.length - 1, backend.get_int_from_config("GOODCHECK", "strategies")))
                     onActivated: {
                         let selectedValue = model[currentIndex];
                         backend.set_to_config("GOODCHECK", "strategies", currentIndex)
