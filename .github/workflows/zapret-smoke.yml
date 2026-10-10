@@ -3,7 +3,8 @@ name: Zapret-only smoke tests
 on:
   push:
     branches:
-      - zapret-only-cleanup-20261010
+      - main
+      - feature/one-click-windows-launcher-20261010
   pull_request:
     branches:
       - main
@@ -21,11 +22,23 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
+      - name: Verify launcher help
+        shell: cmd
+        run: call launch.cmd --help
+      - name: Set up virtual environment through launcher
+        shell: cmd
+        run: call launch.cmd --setup-only
+      - name: Verify launcher dependencies
+        shell: cmd
+        run: call launch.cmd --check
+      - name: Verify generated first-run configuration
+        shell: pwsh
+        run: |
+          if (!(Test-Path ".env")) { throw "Missing .env" }
+          if (!(Test-Path "config.properties")) { throw "Missing config.properties" }
       - name: Check Python syntax
-        run: python -m compileall -q run.py update-resource.py src tests
+        run: .\.venv\Scripts\python.exe -m compileall -q run.py update-resource.py src tests
       - name: Run Zapret-only regression tests
-        run: python -m unittest discover -s tests -p "test_*.py" -v
-      - name: Install Qt resource compiler
-        run: python -m pip install "PySide6>=6.8,<7"
+        run: .\.venv\Scripts\python.exe -m unittest discover -s tests -p "test_*.py" -v
       - name: Compile QML resources
-        run: python update-resource.py
+        run: .\.venv\Scripts\python.exe update-resource.py
