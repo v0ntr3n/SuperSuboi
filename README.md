@@ -17,17 +17,42 @@ and ProxiFyre are not selectable engines or visible setup options.
 - Python and the packages in `requirements.txt` for source installs.
 - Administrator privileges to run the Windows packet driver.
 
-## Run from source
+## Run on Windows (one-click)
+
+Double-click **`launch.cmd`** in the repository root. The first time, select:
+
+- **1 — Set up (recommended):** create a local `.venv`, install `requirements.txt`, and start the UI.
+- **2 — Skip setup:** use an existing `.venv` or system Python with dependencies already installed.
+
+After a successful setup, double-clicking `launch.cmd` reuses the environment
+and launches the app immediately. The launcher also creates missing, ignored
+`.env` and `config.properties` with working defaults; it never overwrites
+your existing configuration. An optional GitHub API token can be placed in
+`.env` later (`DEV_API=...`).
+
+You can use the following command-line switches from **Command Prompt**:
+
+```bat
+launch.cmd --setup        REM Create/update .venv and launch
+launch.cmd --skip         REM No package installation; launch with existing Python
+launch.cmd --setup-only   REM Install dependencies without starting the UI
+launch.cmd --check        REM Verify key Python imports
+```
+
+**Python 3.10+ must already be installed** to run `run.py`; Python 3.12
+is recommended. The launcher creates a virtual environment automatically,
+but cannot run the Python GUI without a Python interpreter. Windows may
+prompt for administrator access when the app starts.
+
+To start manually instead:
 
 ```powershell
 python -m pip install -r requirements.txt
 python run.py
 ```
 
-On the first run, `run.py` may ask for an optional GitHub API token and
-generate `config.properties`. Fill in the generated properties, then rerun.
-The default launcher regenerates the QML resources, so avoid `--fast`
-after editing QML until those resources have been regenerated.
+The default launcher regenerates QML resources. Avoid `run.py --fast`
+after editing QML until resources have been regenerated.
 
 Open **Zapret** in the sidebar, choose a preset, and start the process.
 GoodCheck can be used to test Zapret strategies.
