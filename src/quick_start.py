@@ -12,11 +12,11 @@ from _data import DEBUG, DIRECTORY, CONFIG_PATH, SETTINGS_FILE_PATH, ZAPRET_PATH
 
 def check_app_is_runned(logger:AppLogger):
     if not DEBUG:
-        existing_app = is_process_running('goodbyeDPI.exe')
+        existing_app = is_process_running('winws.exe')
         hot_debugger.log(f'ExistApp: {existing_app}')
         if existing_app:
             result = messagebox.askyesno(text.inAppText['app_is_running'], 
-                                         text.inAppText['process']+" 'goodbyeDPI.exe' "+text.inAppText['app_is_running_info'])
+                                         text.inAppText['process']+" 'winws.exe' "+text.inAppText['app_is_running_info'])
             if result:
                 try:
                     hot_debugger.log(f'Try to kill...')
@@ -92,7 +92,9 @@ def kill_update():
         except (psutil.NoSuchProcess, psutil.AccessDenied, psutil.ZombieProcess):
             pass
 
-def merge_blacklist(goodbye_dpi_path):
+def merge_blacklist(goodbye_dpi_path=None):
+    if not goodbye_dpi_path or not os.path.exists(goodbye_dpi_path):
+        return
     russia_youtube_file = os.path.join(goodbye_dpi_path, 'russia-youtube.txt')
     custom_blacklist_file = os.path.join(goodbye_dpi_path, 'custom_blacklist.txt')
 

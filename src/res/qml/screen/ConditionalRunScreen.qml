@@ -49,7 +49,7 @@ ScrollablePage {
     property var currentSettingsEdit: ""
     property var locPriority: [backend.get_element_loc('highest'), backend.get_element_loc('default'), backend.get_element_loc('lowest')]
     property var locAction: [backend.get_element_loc('kill'), backend.get_element_loc('run')]
-    property var locActionEngine: ["GoodbyeDPI", "Zapret", "ByeDPI", "SpoofDPI"]
+    property var locActionEngine: ["Zapret"]
     property var locType: [backend.get_element_loc('single_action'), backend.get_element_loc('track')]
     function hideAll() {
         drawerContentRect.visible = true
@@ -1068,10 +1068,7 @@ ScrollablePage {
                                             id:targetComponentComboBox
                                             model: [
                                                 backend.get_element_loc("notset"), 
-                                                "GoodbyeDPI", 
-                                                "Zapret", 
-                                                "ByeDPI", 
-                                                "SpoofDPI"
+                                                "Zapret"
                                                 ]
                                             Layout.preferredWidth: 300
                                             Layout.alignment: Qt.AlignRight

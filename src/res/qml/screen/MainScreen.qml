@@ -53,13 +53,9 @@ Item{
             "/": {url: resolvedUrl("res/qml/page/T_Home.qml"),singleton:true},
             "/about": resolvedUrl("res/qml/page/T_About.qml"),
             "/system": {url: resolvedUrl("res/qml/page/T_System.qml")},
-            "/goodbyedpi/advanced": resolvedUrl("res/qml/page/T_GoodbyedpiAdvanced.qml"),
             "/additional": resolvedUrl("res/qml/page/T_AdditionalUtils.qml"),
             "/personalize": resolvedUrl("res/qml/page/T_Personalize.qml"),
-            "/goodbyedpi": resolvedUrl("res/qml/page/T_Goodbyedpi.qml"),
             "/zapret": resolvedUrl("res/qml/page/T_Zapret.qml"),
-            "/spoofdpi": resolvedUrl("res/qml/page/T_Spoofdpi.qml"),
-            "/byedpi": resolvedUrl("res/qml/page/T_Byedpi.qml"),
             "/update": resolvedUrl("res/qml/page/T_Update.qml"),
             "/proxy": resolvedUrl("res/qml/page/T_Proxy.qml"),
         }

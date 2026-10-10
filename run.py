@@ -86,6 +86,8 @@ def environment():
     if current != '':
         work_path = work_path + __path_separator() + current
     environ["PYTHONPATH"] = work_path
+    environ["PYTHONUTF8"] = "1"
+    environ["PYTHONIOENCODING"] = "utf-8"
     return environ
 
 def uac_check():
@@ -106,7 +108,7 @@ def generate_python_file(output_file, mapping=None):
         application_version=properties.get('domain', ''),
         build_name=properties.get('projectName', ''),
         build_hotreload=properties.get('hotLoad', ''),
-        build_project_path=Path(PATH, "src")
+        build_project_path=Path(PATH, "src").as_posix()
     )
     if mapping is None:
         mapping = dict()
@@ -122,7 +124,7 @@ application_domain = "${application_domain}"
 application_version = "${application_version}"
 build_name = "${build_name}"
 build_hotreload = "${build_hotreload}"
-build_project_path = "${build_project_path}"
+build_project_path = r"${build_project_path}"
 """)
     rendered_content = template.substitute(target)
     with open(output_file, 'w', encoding='utf-8') as file:

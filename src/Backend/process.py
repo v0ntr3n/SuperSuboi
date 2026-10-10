@@ -87,98 +87,48 @@ def build_command_from_config(engine_name, parameter_mapping, value_parameters):
 
     return command
 
-def check_args(preset, engine=None):
-    engine = engine.lower() if engine else settings.settings['GLOBAL']['engine'].lower()
-    cfg = settings.settings['CONFIG'].get(f'{engine}_config_path', '')
-    if cfg != "" and os.path.exists(cfg) and configs[engine].configfile != cfg:
-        configs[engine].configfile = cfg
+def check_args(preset, engine='zapret'):
+    cfg = settings.settings['CONFIG'].get('zapret_config_path', '')
+    if cfg != "" and os.path.exists(cfg) and configs['zapret'].configfile != cfg:
+        configs['zapret'].configfile = cfg
     elif cfg == "" or not os.path.exists(cfg):
-        configs[engine].configfile = CONFIG_PATH + f"/{engine}/user.json"
-    configs[engine].reload_config()
+        configs['zapret'].configfile = CONFIG_PATH + "/zapret/user.json"
+    configs['zapret'].reload_config()
 
-    
-    if engine == 'goodbyedpi':
-        advanced_mode_setting = settings.settings.getboolean('GLOBAL', 'use_advanced_mode')
-        if advanced_mode_setting and preset != -1:
-            advanced_mode_setting = False
+    advanced_mode_setting = settings.settings.getboolean('ZAPRET', 'use_advanced_mode')
+        
+    if advanced_mode_setting:
+        parameter_mapping, value_parameters = get_parameter_mappings('zapret')
+        command = build_command_from_config('zapret', parameter_mapping, value_parameters)
     else:
-        advanced_mode_setting = settings.settings.getboolean(engine.upper(), 'use_advanced_mode')
-        
-    if advanced_mode_setting or engine == 'spoofdpi':
-        parameter_mapping, value_parameters = get_parameter_mappings(engine)
-        command = build_command_from_config(engine, parameter_mapping, value_parameters)
+        preset = int(settings.settings['ZAPRET'].get('preset', -1)) if preset == -1 else preset
+        command = get_preset_parameters(preset, 'zapret')
 
-    else:
-        preset = int(settings.settings[engine.upper()].get('preset', -1)) if preset == -1 else preset
-        command = get_preset_parameters(preset, engine)
-
-        if engine == 'goodbyedpi':
-            if settings.settings['GLOBAL'].get('change_dns') == 'True':
-                dns_prompt = [
-                    VALUE_PARAMETERS['dns'], settings.settings['GOODBYEDPI']['dns_value'],
-                    VALUE_PARAMETERS['dns_port'], settings.settings['GOODBYEDPI']['dns_port_value'],
-                    VALUE_PARAMETERS['dnsv6'], settings.settings['GOODBYEDPI']['dnsv6_value'],
-                    VALUE_PARAMETERS['dnsv6_port'], settings.settings['GOODBYEDPI']['dnsv6_port_value']
-                ]
-                command.extend(dns_prompt)
-            if settings.settings['GOODBYEDPI'].get('use_blacklist') == 'True':
-                command.extend(['--blacklist', '..//russia-blacklist.txt'])
-            if settings.settings['GOODBYEDPI'].get('use_blacklist_custom') == 'True':
-                command.extend(['--blacklist', '..//custom_blacklist.txt'])
-        
-    if engine in supported_proxy_engines:
-        addr = settings.settings['PROXY']['proxy_addr']
-        port = settings.settings['PROXY']['proxy_port']
-        command = set_prefered_addr(engine, command, addr, port)
-        
     return command
     
 def get_preset_name(engine, presetId):
     _additional = None
     additional = ""
-    if engine == 'goodbyeDPI':
-        if presetId == 9:
-            _additional = "default"
-        elif presetId == 10:
-            _additional = "recommended"
-        elif presetId == 11:
-            _additional = "alt"
-        
-        if _additional:
-            additional = f" ({get_locale(_additional)})" 
-            
-        return f"{presetId}. "+ get_locale(f"preset_{presetId}") + additional
-    elif engine == 'zapret':
-        if presetId == 3:
-            _additional = "recommended"
-        elif presetId == 4:
-            _additional = "alt"
-        
-        if _additional:
-            additional = f" ({get_locale(_additional)})" 
-        
-        return f"{presetId}. "+ get_locale(f"qpreset_{presetId}") + additional
+    if presetId == 3:
+        _additional = "recommended"
+    elif presetId == 4:
+        _additional = "alt"
     
-    elif engine == 'byedpi':
-        return f"{presetId}. "+ "("+get_locale(f"default") + ")"
+    if _additional:
+        additional = f" ({get_locale(_additional)})" 
     
-def get_engine_preset(engine:str):
-    if engine == 'goodbyeDPI':
-        advanced_mode_setting = settings.settings.getboolean('GLOBAL', 'use_advanced_mode')
-    else:
-        advanced_mode_setting = settings.settings.getboolean(engine.upper(), 'use_advanced_mode')
+    return f"{presetId}. "+ get_locale(f"qpreset_{presetId}") + additional
     
-    cfg = settings.settings.get('CONFIG', f'{engine.lower()}_config_path')
+def get_engine_preset(engine:str = 'zapret'):
+    advanced_mode_setting = settings.settings.getboolean('ZAPRET', 'use_advanced_mode')
+    cfg = settings.settings.get('CONFIG', 'zapret_config_path')
     if cfg != "" and os.path.exists(cfg) and advanced_mode_setting:
         return f"User config - \"{cfg.split('/')[-1]}\""
-
     else:
-        if advanced_mode_setting or engine == 'spoofdpi':
+        if advanced_mode_setting:
             return "Custom - \"user.json\""
-        elif not advanced_mode_setting:
-            return get_preset_name(engine, settings.settings.getint(f'{engine.upper()}', "preset"))
-    print(engine)
-    return "UNKNOWN"
+        else:
+            return get_preset_name('zapret', settings.settings.getint('ZAPRET', "preset"))
 
 
 class ProxyProcess(QObject):
@@ -410,55 +360,23 @@ class Process(QObject):
         return self.start_process(engine, _args.split(" ") if _args else None)
 
     @Slot(result=bool)
-    def start_process(self, engine=None, _args=None):
-        print(engine)
-        self.engine = settings.settings['GLOBAL']['engine'] if engine is None else engine
+    def start_process(self, engine='zapret', _args=None):
+        self.engine = 'zapret'
         self.engine_changed.emit(self.engine)
         self.preset_changed.emit()
         self.clean_output.emit()
-        
-        if engine and not settings.settings['COMPONENTS'].getboolean(engine.lower()):
-            self.handle_error('Component not installed correctly.')
-            return False
-
         self.output = ""
-        is_can_start = True
-        
-        if (
-            (self.engine in supported_proxy_engines) and 
-            settings.settings['PROXY']['proxy_now_used'] == ''
-            ):
-            
-            self.process_need_setup.emit()
-            self.process_stopped.emit("by user")
-            return False
-        elif self.engine in supported_proxy_engines:
-            if settings.settings['PROXY']['proxy_now_used'] == 'manual':
-                is_can_start = True
-            else: 
-                is_can_start = self.proxy_process.start_proxy(self.engine)
-            
-        if not is_can_start:
-            return False
         
         try:
-            new_args = [engine] if engine else [None]
-            args = check_args(-1, engine) if _args is None else _args
+            new_args = ['zapret']
+            args = check_args(-1, 'zapret') if _args is None else _args
             new_args.extend(args)
         except Exception as ex:
             error_sound()
             self.handle_error(f"Internal error. Unable to start process. \nError information: \n{ex}")
-            if self.engine in supported_proxy_engines:
-                self.proxy_process.stop_proxy(self.engine)
             return False
         
         self.is_running = True
-        
-        if self.engine in supported_proxy_engines:
-            self.output += f"[PROXY] Proxy {self.engine} started.\n"
-            self.output_added.emit(f"[PROXY] Proxy {self.engine} started.\n")
-            self.process_started.emit(True)
-            
         return self.process.start_goodbyedpi(*new_args)
 
     @Slot(result=bool)

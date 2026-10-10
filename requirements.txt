@@ -11,3 +11,5 @@ aiohttp==3.11.13
 icmplib==3.0.4
 packaging==24.2
 markdown==3.8
+qrcode>=8.0
+qasync>=0.27.0

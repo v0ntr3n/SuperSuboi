@@ -6,7 +6,7 @@ import shutil
 import sys
 import traceback
 import winreg
-from logger import AppLogger
+from logger._logger import AppLogger
 from dotenv import load_dotenv
 
 if hasattr(__import__(__name__), '__compiled__'):
@@ -21,7 +21,7 @@ else:
 
 
 DEBUG = True if '--debug' in sys.argv[1:] and not state else False
-DEBUG_PATH = os.path.dirname(os.path.abspath(__file__)).replace("\src", "/") if DEBUG else ""
+DEBUG_PATH = os.path.dirname(os.path.abspath(__file__)).replace(r"\src", "/").replace("/src", "/") if DEBUG else ""
 
 if state:
     application_path = os.path.dirname(sys.executable)
@@ -44,7 +44,7 @@ def is_font_installed(font_name):
     except Exception:
         return False
 
-DIRECTORY = f'{application_path}/' if not DEBUG else ''
+DIRECTORY = f'{application_path}/' if state else ''
 
 VERSION = "1.2.14"
 
@@ -58,36 +58,28 @@ SETTINGS_FILE_PATH = DIRECTORY+'data/settings/settings.ini'
 BACKUP_SETTINGS_FILE_PATH = DIRECTORY+'data/settings/_settings.ini'
 CONFIG_PATH = DIRECTORY+'data/settings/presets'
 LOCALE_FILE_PATH =  DIRECTORY+'data/loc/loc.ini'
-GOODBYE_DPI_PATH =  DIRECTORY+'data/goodbyeDPI/'
+GOODBYE_DPI_PATH = ""
+GOODBYE_DPI_EXECUTABLE = ""
+SPOOFDPI_PATH = ""
+SPOOFDPI_EXECUTABLE = ""
+BYEDPI_PATH = ""
+BYEDPI_EXECUTABLE = ""
+
 GOODCHECK_PATH = DIRECTORY+'data/GoodCheck/'
-GOODBYE_DPI_EXECUTABLE = "goodbyedpi.exe" 
 ZAPRET_PATH = DIRECTORY+'data/zapret/'
 ZAPRET_EXECUTABLE = "winws.exe" 
-SPOOFDPI_PATH = DIRECTORY+'data/spoofdpi/'
-SPOOFDPI_EXECUTABLE = "spoofdpi-windows-amd64.exe" 
-BYEDPI_PATH = DIRECTORY+'data/byedpi/'
-BYEDPI_EXECUTABLE = "ciadpi.exe" 
 PROXIFYRE_CONFIG_PATH = DIRECTORY+'data/proxifyre/app-config.json'
 PROXIFYRE_EXECUTABLE = 'proxifyre.exe'
 
 DIRECTORIES = {
-    'goodbyedpi':GOODBYE_DPI_PATH,
     'zapret':ZAPRET_PATH,
-    'byedpi':BYEDPI_PATH,
-    'spoofdpi':SPOOFDPI_PATH,
 }
 EXECUTABLES = {
-    'goodbyeDPI':GOODBYE_DPI_EXECUTABLE,
     'zapret':ZAPRET_EXECUTABLE,
-    'spoofdpi':SPOOFDPI_EXECUTABLE,
-    'byedpi': BYEDPI_EXECUTABLE,
     'proxifyre': PROXIFYRE_EXECUTABLE
 }
 COMPONENTS_URLS = {
-    'goodbyeDPI':'ValdikSS/GoodbyeDPI',
     'zapret':'bol-van/zapret',
-    'spoofdpi':'xvzc/SpoofDPI',
-    'byedpi':'hufrea/byedpi'
 }
 
 PROXIFYRE_VERSIONS = {
@@ -168,11 +160,9 @@ S_VALUE_PARAMETERS = {
 }
 
 PRESETS = {
-    'goodbyedpi' : "preset_{i}",
     'zapret' : "qpreset_{i}",
 }
 PRESETS_DEFAULT = {
-    'goodbyedpi' : 9,
     'zapret' : 3,
 }
 
@@ -268,7 +258,7 @@ class UserConfig:
         self.write_config()
 
 try:
-    components = ['goodbyedpi', 'zapret', 'byedpi', 'spoofdpi']
+    components = ['zapret']
 
     for component in components:
         src = os.path.join('_internal', 'data', 'settings', 'presets', component, 'user.json')
@@ -284,25 +274,13 @@ try:
         shutil.copyfile(src, dst)
         logger.create_info_log(f"Copied {src} to {dst}")
     
-    goodbyedpi_config_path = os.path.join(settings.settings['CONFIG']['goodbyedpi_config_path'])
-    zapret_config_path = os.path.join(settings.settings['CONFIG']['zapret_config_path'])
-    byedpi_config_path = os.path.join(settings.settings['CONFIG']['byedpi_config_path'])
-    spoofdpi_config_path = os.path.join(settings.settings['CONFIG']['spoofdpi_config_path'])
+    zapret_config_path = os.path.join(settings.settings['CONFIG'].get('zapret_config_path', ''))
     
     configs = {
-        'goodbyedpi':UserConfig(CONFIG_PATH+"/goodbyedpi/user.json" if\
-                                goodbyedpi_config_path == "" or not os.path.exists(goodbyedpi_config_path) else\
-                                goodbyedpi_config_path),
         'zapret':UserConfig(CONFIG_PATH+"/zapret/user.json" if\
                             zapret_config_path == "" or not os.path.exists(zapret_config_path) else\
                             zapret_config_path),
-        'byedpi':UserConfig(CONFIG_PATH+"/byedpi/user.json" if\
-                            byedpi_config_path == "" or not os.path.exists(byedpi_config_path) else\
-                            byedpi_config_path),
-        'spoofdpi':UserConfig(CONFIG_PATH+"/spoofdpi/user.json" if\
-                            spoofdpi_config_path == "" or not os.path.exists(spoofdpi_config_path) else\
-                            spoofdpi_config_path),
-        'goodcheck':UserConfig(CONFIG_PATH+"/goodbyedpi/goodcheck.json")
+        'goodcheck':UserConfig(CONFIG_PATH+"/zapret/goodcheck.json")
     }
 except:
     error_message = traceback.format_exc()

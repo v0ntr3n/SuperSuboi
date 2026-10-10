@@ -169,7 +169,7 @@ async def show_error(app_id : str, title, description, btnText, btnText2):
 
 def register_app():
     if not Toast.is_registered_app_id("GoodbyeDPI_app"):
-        Toast.register_app_id("GoodbyeDPI_app", "GoodbyeDPI UI", icon_uri = DIRECTORY+"data\icon.png")
+        Toast.register_app_id("GoodbyeDPI_app", "GoodbyeDPI UI", icon_uri = DIRECTORY+"data/icon.png")
 
 # utils
 
@@ -244,12 +244,11 @@ class GoodbyedpiWorker(QThread):
 
     def run(self):
         engine = self.engine
-        execut = EXECUTABLES[engine]
-
-        if engine == 'goodbyeDPI':
-            self.path = os.path.join(GOODBYE_DPI_PATH, 'x86_64', GOODBYE_DPI_EXECUTABLE)
-            cwd = os.path.join(GOODBYE_DPI_PATH, 'x86_64')
+        if engine == 'zapret' or engine not in EXECUTABLES:
+            self.path = os.path.join(DIRECTORY, 'data/zapret', ZAPRET_EXECUTABLE)
+            cwd = os.path.join(DIRECTORY, 'data/zapret')
         else:
+            execut = EXECUTABLES[engine]
             self.path = os.path.join(DIRECTORY, f'data/{engine}', execut)
             cwd = os.path.join(DIRECTORY, f'data/{engine}')
 
@@ -435,13 +434,9 @@ def start_process(*args, **kwargs):
     :param shell: Use shell (`True`||`False`). Default -> `False`
     '''
     engine = kwargs.get('engine', settings.settings["GLOBAL"]["engine"]) 
-    execut = kwargs.get('execut', EXECUTABLES[engine])
-    path = kwargs.get('path', os.path.join(GOODBYE_DPI_PATH, 'x86_64', GOODBYE_DPI_EXECUTABLE) \
-                                           if engine == 'goodbyeDPI' \
-                                           else os.path.join(DIRECTORY+f'data/{engine}', execut))
-    cwd = kwargs.get('cwd', os.path.join(GOODBYE_DPI_PATH, 'x86_64') \
-                                         if settings.settings['GLOBAL']['engine'] == 'goodbyeDPI'\
-                                         else os.path.join(DIRECTORY+f'data/{engine}'))
+    execut = kwargs.get('execut', EXECUTABLES.get(engine, 'winws.exe'))
+    path = kwargs.get('path', os.path.join(DIRECTORY+f'data/{engine}', execut))
+    cwd = kwargs.get('cwd', os.path.join(DIRECTORY+f'data/{engine}'))
     env = kwargs.get('env', None)
     shell = kwargs.get('shell', False)
     
@@ -896,9 +891,8 @@ def register_component(component_name:str, version):
         ])
 
 def unregister_component(component_name:str):
-    if component_name == 'goodbyeDPI':
+    if component_name.lower() == 'zapret':
         return 'ERR_CANNOT_REMOVE_COMPONENT'
-    if settings.settings['GLOBAL']['engine'] == component_name: change_setting('GLOBAL', f'engine', 'goodbyeDPI')
     change_setting('COMPONENTS', f'{component_name.lower()}', 'False')
     return 'True'
 

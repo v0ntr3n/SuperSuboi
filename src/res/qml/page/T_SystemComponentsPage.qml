@@ -540,32 +540,11 @@ Page {
                             ListModel {
                                 id: componentModel
                                 ListElement {
-                                    componentId: "goodbyedpi"
-                                    component: "goodbyedpi"
-                                    componentName: "GoodbyeDPI"
-                                    componentChecked: true
-                                    removable: false
-                                }
-                                ListElement {
                                     componentId: "zapret"
                                     component: "zapret"
                                     componentName: "Zapret"
-                                    componentChecked: false
-                                    removable: true
-                                }
-                                ListElement {
-                                    componentId: "byedpi"
-                                    component: "byedpi"
-                                    componentName: "ByeDPI"
-                                    removable: true
-                                    componentChecked: false
-                                }
-                                ListElement {
-                                    componentId: "spoofdpi"
-                                    component: "spoofdpi"
-                                    componentName: "SpoofDPI"
-                                    removable: true
-                                    componentChecked: false
+                                    componentChecked: true
+                                    removable: false
                                 }
                             }
 

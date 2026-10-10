@@ -74,24 +74,9 @@ class Backend(QObject):
     def getComponentsList(self):
         return [
             {
-                'key': '/goodbyedpi',
-                'title': 'GoodbyeDPI',
-                '_icon': f"qrc:/qt/qml/{PATH}/res/image/glogo.png",
-            },
-            {
                 'key': '/zapret',
                 'title': 'Zapret',
                 '_icon': f"qrc:/qt/qml/{PATH}/res/image/zapret.png",
-            },
-            {
-                'key': '/byedpi',
-                'title': 'ByeDPI',
-                '_icon': f"qrc:/qt/qml/{PATH}/res/image/ByeDPI.png",
-            },
-            {
-                'key': '/spoofdpi',
-                'title': 'SpoofDPI',
-                '_icon': "",
             },
         ]
         
@@ -105,6 +90,8 @@ class Backend(QObject):
             
     @Slot(str)
     def save_config_to_bbd(self, filepath):
+        if 'byedpi' not in configs:
+            return
         config = configs['byedpi']
         bbd_config = {
             "app": "io.github.romanvht.byedpi",

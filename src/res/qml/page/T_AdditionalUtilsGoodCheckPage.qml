@@ -45,44 +45,19 @@ ScrollablePage {
 
     property int currentStep: context && context.argument.info === 'results' ? 
                               2: goodCheck.is_process_alive() ? 1 : 0
-    property var goodbyeDPI_model: [
-        "[basic functionality test]",
-        "[IPv4] - [e1 + e2 + e4] - [LONG]",
-        "[IPv4] - [e1 + e2 + e4] - [SHORT]",
-        "[IPv4] - [e1] - [LONG]",
-        "[IPv4] - [e1] - [SHORT]",
-        "[IPv4] - [e2] - [LONG]",
-        "[IPv4] - [e2] - [SHORT]",
-        "[IPv4] - [e4] - [LONG]",
-        "[IPv4] - [e4] - [SHORT]",
-        "[IPv6] - [e1 + e2 + e4] - [LONG]",
-        "[IPv6] - [e1 + e2 + e4] - [SHORT]",
-        "[IPv6] - [e1] - [LONG]",
-        "[IPv6] - [e1] - [SHORT]",
-        "[IPv6] - [e2] - [LONG]",
-        "[IPv6] - [e2] - [SHORT]",
-        "[IPv6] - [e4] - [LONG]",
-        "[IPv6] - [e4] - [SHORT]",
-        ]
+
     property var zapret_model: [
         "[IPv4] - [TCP] - [No wssize, NO syndata]",
         "[IPv4] - [UDP]",
         "[IPv6] - [UDP]",
     ]
-    property var byedpi_model: [
-        "[TCP] - [IPv4]"
-    ]
 
     property var models:[
-        zapret_model,
-        goodbyeDPI_model,
-        byedpi_model
+        zapret_model
     ]
 
     property var engines: [
-        'zapret',
-        'goodbyedpi',
-        'byedpi',
+        'zapret'
     ]
 
     property bool output_ready: false
@@ -490,8 +465,7 @@ ScrollablePage {
                         }
                         width:page.width < 620 ? page.width - 280 : 350
                         model: [
-                            "Zapret",
-                            "GoodbyeDPI",
+                            "Zapret"
                         ]
                         currentIndex:model.indexOf(backend.get_from_config("GOODCHECK", "engine"))
                         onActivated: {

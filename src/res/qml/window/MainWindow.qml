@@ -507,47 +507,7 @@ FramelessWindow {
                         }
                     }
                 }
-                P.Menu {
-                    title: backend.get_element_loc("component")
-                    enabled:!isProcessCheckRun
 
-                    P.MenuItem {
-                        text: qsTr("GoodbyeDPI")
-                        checkable:true
-                        checked:engine === 'goodbyeDPI'
-                        enabled:backend.getBool('COMPONENTS', 'goodbyedpi')
-                        onTriggered: {
-                            changeEngine('goodbyeDPI');
-                        }
-                    }
-                    P.MenuItem {
-                        text: qsTr("Zapret")
-                        checkable:true
-                        checked:engine === 'zapret'
-                        enabled:backend.getBool('COMPONENTS', 'zapret')
-                        onTriggered: {
-                            changeEngine('zapret');
-                        }
-                    }
-                    P.MenuItem {
-                        text: qsTr("ByeDPI")
-                        checked:engine === 'byedpi'
-                        checkable:true
-                        enabled:backend.getBool('COMPONENTS', 'byedpi')
-                        onTriggered: {
-                            changeEngine('byedpi');
-                        }
-                    }
-                    P.MenuItem {
-                        text: qsTr("SpoofDPI")
-                        checked:engine === 'spoofdpi'
-                        checkable:true
-                        enabled:backend.getBool('COMPONENTS', 'spoofdpi')
-                        onTriggered: {
-                            changeEngine('spoofdpi');
-                        }
-                    }
-                }
                 P.MenuSeparator {}
                 P.MenuItem {
                     text: backend.get_element_loc("maximize")

@@ -20,7 +20,6 @@ from _data import DIRECTORIES, DIRECTORY, UserConfig, configs, settings, Setting
 from .chkPresetUtils import GGC_SERVER, Options, ServerAvailabilityChecker
 from .process import Process
 ENGINE = {
-    "GoodbyeDPI":"gdpi",
     "Zapret":"zapret"
 }
 
@@ -261,8 +260,7 @@ class GoodCheckHelper(QObject):
     
     @Slot(result=str)
     def get_check_engine_name(self):
-        _engine = configs['goodcheck'].get_value("engine")
-        return 'goodbyeDPI' if _engine.lower() == 'goodbyedpi' else _engine.lower()
+        return 'zapret'
         
     @Slot(result='QVariantList')
     def get_sitelist(self):
@@ -349,17 +347,9 @@ class GoodCheckHelper(QObject):
         if sitelists_to_check == []:
             sitelists_to_check = ['NaN']
         
-        if engine.lower() in ['zapret', 'goodbyedpi']:
-            self.settings.change_setting("GoodbyeDPI", "GoodbyeDPIFolder", "..\\\\goodbyeDPI")
-            self.settings.change_setting("GoodbyeDPI", "GoodbyeDPIExecutableName", "gdpi.exe")
-            self.settings.change_setting("GoodbyeDPI", "GoodbyeDPIServiceNames", "goodbyedpi")
+        if engine.lower() == 'zapret':
             self.settings.change_setting("Zapret", "ZapretFolder", "..\\\\zapret")
-            self.settings.change_setting("ByeDPI", "ByeDPIFolder", "..\\\\byedpi")
-            
-            if os.path.exists(DIRECTORY+"data/goodbyeDPI/x86_64/goodbyedpi.exe"):
-                shutil.copy(DIRECTORY+"data/goodbyeDPI/x86_64/goodbyedpi.exe", DIRECTORY+"data/goodbyeDPI/x86_64/gdpi.exe")
-
-            configs['goodcheck'].set_value('engine', engine)
+            configs['goodcheck'].set_value('engine', 'Zapret')
             self.settings.save_settings()
             configs['goodcheck'].reload_config()
 

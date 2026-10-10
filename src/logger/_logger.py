@@ -31,7 +31,7 @@ class AppLogger:
         self.log_file_path = os.path.join(self.logs_folder, f'{utilname}.log')
         
         os.makedirs(self.logs_folder, exist_ok=True)
-        handler = logging.FileHandler(self.log_file_path)
+        handler = logging.FileHandler(self.log_file_path, encoding='utf-8', errors='replace')
         
         self.logger = logging.getLogger(self.utilname)
         self.logger.setLevel(log_level)

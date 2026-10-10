@@ -24,11 +24,15 @@ You need to create you own qml files for FluentUI folder
 current_dir = os.path.dirname(os.path.abspath(__file__))
 venv_dir = Path(sys.prefix)
 pyside6_rcc = Path(venv_dir, 'Scripts', 'pyside6-rcc.exe')
+if not pyside6_rcc.exists():
+    import shutil
+    found = shutil.which('pyside6-rcc')
+    pyside6_rcc = Path(found) if found else 'pyside6-rcc'
 
-subprocess.Popen(
-    [pyside6_rcc,'src/resource.qrc', "-o",
-     'src/resource_rc.py']
-                 )
+subprocess.run(
+    [str(pyside6_rcc), 'src/resource.qrc', "-o", 'src/resource_rc.py'],
+    check=True
+)
 
 # subprocess.Popen(
 #       [pyside6_rcc,'FluentUI/resource.qrc', "-o",

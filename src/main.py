@@ -11,8 +11,8 @@ try:
     import traceback
 
     from qasync import QEventLoop
-    from _data import BACKUP_SETTINGS_FILE_PATH, BYEDPI_EXECUTABLE, DEBUG, DIRECTORY, \
-            GOODBYE_DPI_PATH, LOG_LEVEL, SETTINGS_FILE_PATH, SPOOFDPI_EXECUTABLE, VERSION, \
+    from _data import BACKUP_SETTINGS_FILE_PATH, DEBUG, DIRECTORY, \
+            LOG_LEVEL, SETTINGS_FILE_PATH, VERSION, \
             ZAPRET_EXECUTABLE, settings, text
     import resource_rc
     from PySide6.QtCore import QProcess
@@ -20,7 +20,7 @@ try:
     from PySide6.QtQml import QQmlApplicationEngine, qmlRegisterType
 
     from FluentUI import FluentUIPlugin
-    import Logger
+    from logger import qt_logger as Logger
     import GlobalConfig
     from Components import CircularReveal
     from AppInfo import AppInfo
@@ -174,9 +174,7 @@ try:
                 config.set('GLOBAL', 'is_first_run', 'False')
 
                 components_to_check = {
-                    'spoofdpi': SPOOFDPI_EXECUTABLE,
-                    'byedpi': BYEDPI_EXECUTABLE,
-                    'zapret':ZAPRET_EXECUTABLE,
+                    'zapret': ZAPRET_EXECUTABLE,
                 }
                 hot_debugger.log("Check components...")
                 for component, executable in components_to_check.items():
