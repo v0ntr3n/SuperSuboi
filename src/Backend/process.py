@@ -298,7 +298,10 @@ class Process(QObject):
     def __init__(self, parent=None):
         super().__init__()
         self.output = ""
-        self.engine = settings.settings['GLOBAL']['engine']
+        self.engine = 'zapret'
+        # Restore the only supported engine when upgrading existing settings.
+        if settings.settings['GLOBAL'].get('engine') != 'zapret':
+            change_setting('GLOBAL', 'engine', 'zapret')
         self.is_running = False
         self.process = GoodbyedpiProcess()
         self.process.output_signal.connect(self.output_added)
@@ -345,9 +348,12 @@ class Process(QObject):
     
     @Slot(str)
     def change_engine(self, engine):
-        change_setting("GLOBAL", "engine", engine)
+        # This build ships only Zapret. Ignore stale or external engine requests.
+        if engine.lower() != 'zapret':
+            return
+        change_setting("GLOBAL", "engine", 'zapret')
         if not self.is_running:
-            self.engine = engine
+            self.engine = 'zapret'
             self.engine_changed.emit(self.engine)
             self.preset_changed.emit()
 
