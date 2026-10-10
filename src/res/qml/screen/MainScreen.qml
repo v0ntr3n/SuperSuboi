@@ -57,7 +57,6 @@ Item{
             "/personalize": resolvedUrl("res/qml/page/T_Personalize.qml"),
             "/zapret": resolvedUrl("res/qml/page/T_Zapret.qml"),
             "/update": resolvedUrl("res/qml/page/T_Update.qml"),
-            "/proxy": resolvedUrl("res/qml/page/T_Proxy.qml"),
         }
     }
     Menu{
@@ -84,7 +83,7 @@ Item{
         router: page_router
         anchors.fill: parent
         logo: "qrc:/qt/qml/GoodbyeDPI_UI/res/image/logo.png"
-        title: "GoodbyeDPI UI"
+        title: "SuperSuboi (Zapret)"
         items: originalItems
         footerItems: originalFooterItems
         displayMode: Global.displayMode
@@ -149,12 +148,6 @@ Item{
             property var key: componentKey
             property var title: componentTitle
             property var _icon
-        }
-    }
-    Connections {
-        target:proxyHelper
-        function onOpenProxySettings(){
-            page_router.go("/proxy")
         }
     }
     Connections {

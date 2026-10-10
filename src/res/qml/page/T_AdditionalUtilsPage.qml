@@ -9,25 +9,6 @@ ScrollablePage {
     title: backend.get_element_loc('additional')
     id:page
     header:Item{}
-    property var goodbyeDPI_model: [
-        "[basic functionality test]",
-        "[IPv4] - [e1 + e2 + e4] - [LONG]",
-        "[IPv4] - [e1 + e2 + e4] - [SHORT]",
-        "[IPv4] - [e1] - [LONG]",
-        "[IPv4] - [e1] - [SHORT]",
-        "[IPv4] - [e2] - [LONG]",
-        "[IPv4] - [e2] - [SHORT]",
-        "[IPv4] - [e4] - [LONG]",
-        "[IPv4] - [e4] - [SHORT]",
-        "[IPv6] - [e1 + e2 + e4] - [LONG]",
-        "[IPv6] - [e1 + e2 + e4] - [SHORT]",
-        "[IPv6] - [e1] - [LONG]",
-        "[IPv6] - [e1] - [SHORT]",
-        "[IPv6] - [e2] - [LONG]",
-        "[IPv6] - [e2] - [SHORT]",
-        "[IPv6] - [e4] - [LONG]",
-        "[IPv6] - [e4] - [SHORT]",
-        ]
     property var zapret_model: [
         "[IPv4] - [TCP] - [No wssize, NO syndata]",
         "[IPv4] - [UDP]",
@@ -108,25 +89,6 @@ ScrollablePage {
                     wrapMode:Text.Wrap
                 }
                 Label {
-                    text: backend.get_element_loc("engine")
-                    font: Typography.bodyStrong
-                    Layout.fillWidth:true
-                    wrapMode: Text.Wrap
-                    height:20
-                    Layout.maximumHeight:20
-                    Layout.preferredWidth: parent.width
-                }
-                ComboBox{
-                    id: engine
-                    Layout.preferredWidth:column.width
-                    model: ["GoodbyeDPI", "Zapret"]
-                    currentIndex: backend.get_from_config("GOODCHECK", "engine") === "GoodbyeDPI" ? 0:1
-                    onActivated: {
-                        let selectedValue = model[currentIndex];
-                        backend.set_to_config("GOODCHECK", "engine", selectedValue)
-                    }
-                }
-                Label {
                     text: backend.get_element_loc("curl")
                     font: Typography.bodyStrong
                     Layout.fillWidth:true
@@ -196,7 +158,7 @@ ScrollablePage {
                 }
                 ComboBox{
                     Layout.preferredWidth:column.width
-                    model: engine.currentIndex === 0 ? goodbyeDPI_model : zapret_model
+                    model: zapret_model
                     currentIndex: backend.get_int_from_config("GOODCHECK", "strategies")
                     onActivated: {
                         let selectedValue = model[currentIndex];
@@ -442,56 +404,6 @@ ScrollablePage {
             }
         }
         Button{
-            id:proxyBtn
-            Layout.preferredHeight: 68
-            Layout.fillWidth: true
-            Layout.preferredWidth: Math.min(1000, parent.width * 0.9) 
-            Layout.minimumWidth: 300 
-            Layout.maximumWidth: 1000
-            Layout.alignment: Qt.AlignHCenter
-            enabled: !systemProcessHelper.is_alive()
-            RowLayout{
-                anchors.fill: parent
-                anchors{
-                    leftMargin: 20
-                    rightMargin: 20
-                }
-                spacing: 10
-                ColumnLayout{
-                    Layout.fillWidth: true
-                    spacing: 2
-                    Label{
-                        Layout.fillWidth: true
-                        horizontalAlignment: Text.AlignLeft
-                        text: backend.get_element_loc('proxy_setup')
-                        font: Typography.body
-                        wrapMode:Text.Wrap
-                    }
-                    Label {
-                        Layout.fillWidth:true
-                        text: backend.get_element_loc('proxy_setup_tip')
-                        horizontalAlignment: Text.AlignLeft
-                        font: Typography.caption
-                        color: Theme.res.textFillColorSecondary
-                        wrapMode:Text.Wrap
-                    }
-                }
-                Button {
-                    width: 30
-                    height: 30
-                    Layout.alignment: Qt.AlignVCenter | Qt.AlignRight
-                    text: backend.get_element_loc("setup_btn")
-                    onClicked: {
-                        page_router.go("/proxy")
-                    }
-                }
-            }
-            
-            onClicked: {
-                page_router.go("/proxy")
-            }
-        }
-        Button{
             id:btn2
             Layout.preferredHeight: 68
             Layout.fillWidth:true
@@ -623,11 +535,9 @@ ScrollablePage {
     Connections{
         target:systemProcessHelper
         function onProcessCheckedStarted(){
-            proxyBtn.enabled = false
             btn2.enabled = false
         }
         function onProcessCheckedStopped(){
-            proxyBtn.enabled = true
             btn2.enabled = true
         }
     }

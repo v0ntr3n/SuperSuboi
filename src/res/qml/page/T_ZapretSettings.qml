@@ -423,56 +423,6 @@ ScrollablePage {
         Layout.maximumWidth: 1000
         Layout.alignment: Qt.AlignHCenter
         visible:backend.getBool('COMPONENTS', 'zapret')
-        Rectangle {
-            id:rest1
-            Layout.preferredHeight: Math.max(100, infoColumnLayout.implicitHeight + 20)
-            Layout.fillWidth: true
-            Layout.preferredWidth: Math.min(1000, parent.width * 0.9)
-            Layout.minimumWidth: 300
-            Layout.maximumWidth: 1000
-            Layout.alignment: Qt.AlignHCenter
-            color: Theme.res.controlFillColorDefault
-            border.color: Qt.rgba(0.67, 0.67, 0.67, 0.2)
-            radius: 6
-            visible: backend.getValue('GLOBAL', 'engine') === "zapret" ? false : true 
-            ColumnLayout{
-                id:infoColumnLayout
-                anchors.verticalCenter: parent.verticalCenter  
-                RowLayout{
-                    
-                    spacing:10
-                    height:20
-                    Layout.leftMargin:10
-                    Icon{
-                        id: icon_info
-                        Layout.preferredHeight:20
-                        source:FluentIcons.graph_InfoSolid
-                        color:Theme.accentColor.defaultBrushFor()
-                    }
-                    ColumnLayout{
-                        Label{
-                            text:backend.get_element_loc('attention')
-                            font: Typography.bodyStrong
-                        }
-                        Label{
-                            Layout.preferredWidth:rest1.width - 100
-                            text:backend.get_element_loc('warn1')
-                            font: Typography.body
-                            wrapMode:Text.Wrap
-                        }
-                        Button{
-                            text: backend.get_element_loc('fixnow')
-                            onClicked:{
-                                process.change_engine("zapret")
-                                rest1.visible = false
-                                askToReopen()
-                            }
-                        }
-                    }
-
-                }
-            }
-        }
         ListModel {
             id: componentModel
             Component.onCompleted: {

@@ -160,7 +160,6 @@ ScrollablePage {
                         var provider = currentIndex === 0 ? 'thenewone':'1andrevich'
                         if (backend.getValue('GLOBAL', 'blacklist_provider') !== provider){
                             backend.changeValue('GLOBAL', 'blacklist_provider', provider);
-                            backend.update_list('goodbyeDPI')
                             backend.update_list('zapret')
                         }
                     }
