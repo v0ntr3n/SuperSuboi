@@ -19,18 +19,17 @@ and ProxiFyre are not selectable engines or visible setup options.
 
 ## Run on Windows (one-click)
 
-Double-click **`launch.cmd`** in the repository root. The first time, select:
+**Just double-click `launch.cmd`** in the repository root—no arguments,
+menus, or manual environment setup. On the first launch, the script creates
+a local `.venv`, installs `requirements.txt`, and starts `run.py`.
+On later launches, it reuses the prepared environment and launches directly.
 
-- **1 — Set up (recommended):** create a local `.venv`, install `requirements.txt`, and start the UI.
-- **2 — Skip setup:** use an existing `.venv` or system Python with dependencies already installed.
-
-After a successful setup, double-clicking `launch.cmd` reuses the environment
-and launches the app immediately. The launcher also creates missing, ignored
+The launcher also creates missing, ignored
 `.env` and `config.properties` with working defaults; it never overwrites
 your existing configuration. An optional GitHub API token can be placed in
 `.env` later (`DEV_API=...`).
 
-You can use the following command-line switches from **Command Prompt**:
+Advanced options are available from **Command Prompt**, but are not required:
 
 ```bat
 launch.cmd --setup        REM Create/update .venv and launch

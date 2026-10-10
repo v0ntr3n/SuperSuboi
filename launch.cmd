@@ -27,16 +27,9 @@ echo   SuperSuboi - Zapret Windows Launcher
 echo ========================================
 echo.
 
-rem Reuse a successfully configured environment on subsequent launches.
+rem No prompts: use the prepared environment, otherwise set it up automatically.
 if exist "%VENV_PY%" if exist "%READY_FILE%" goto use_venv
-
-echo No completed local environment was found.
-echo   [1] Set up .venv and install requirements (recommended)
-echo   [2] Skip setup and use an existing Python installation
-echo   [Q] Quit
-choice /C 12Q /N /M "Select 1, 2, or Q: "
-if errorlevel 3 goto done
-if errorlevel 2 goto skip
+echo [INFO] First run: setting up the local Python environment automatically.
 goto setup
 
 :setup
@@ -66,7 +59,7 @@ if exist "%READY_FILE%" del /Q "%READY_FILE%" >nul 2>&1
 echo [INFO] Installing dependencies from requirements.txt...
 "%VENV_PY%" -m pip install --disable-pip-version-check -r "requirements.txt"
 if errorlevel 1 (
-    echo [ERROR] Dependency installation failed. Fix the error and rerun --setup.
+    echo [ERROR] Dependency installation failed. Fix the error and double-click launch.cmd again.
     goto failed
 )
 >"%READY_FILE%" echo Installed requirements.txt successfully.
@@ -109,6 +102,14 @@ goto done
 :launch
 call :prepare_config
 if errorlevel 1 goto failed
+
+rem Used only by automated Windows CI to exercise double-click/no-args flow
+rem without starting an interactive Qt window.
+if /I "%SUPERSUBOI_CI_SKIP_GUI%"=="1" (
+    echo [OK] Automatic launcher setup and config checks passed.
+    goto done
+)
+
 echo.
 echo [INFO] Starting SuperSuboi (Zapret)...
 echo [INFO] Windows may ask for administrator permission for the packet driver.
@@ -125,7 +126,7 @@ set "APP_EXIT=%ERRORLEVEL%"
 if not "%APP_EXIT%"=="0" (
     echo.
     echo [ERROR] run.py exited with code %APP_EXIT%.
-    echo Use launch.cmd --setup to install or repair dependencies.
+    echo Double-click launch.cmd again to retry installation if necessary.
     pause
 )
 popd
@@ -185,7 +186,7 @@ echo Select "Add python.exe to PATH" during installation, then rerun launch.cmd.
 goto failed
 
 :check_failed
-echo [ERROR] Dependencies are missing or broken. Run launch.cmd --setup.
+echo [ERROR] Dependencies are missing or broken. Double-click launch.cmd to set up.
 goto failed
 
 :unknown_option
@@ -193,7 +194,7 @@ echo [ERROR] Unknown option: %~1
 :help
 echo.
 echo Usage:
-echo   launch.cmd              Reuse .venv or offer setup / skip
+echo   launch.cmd              Automatically set up .venv if needed, then run app
 echo   launch.cmd --setup      Create/repair .venv, install packages, run app
 echo   launch.cmd --skip       Skip installation and run with existing Python
 echo   launch.cmd --setup-only Prepare environment without opening the app

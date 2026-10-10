@@ -4,7 +4,7 @@ on:
   push:
     branches:
       - main
-      - feature/one-click-windows-launcher-20261010
+      - feature/no-click-setup-launch-20261010
   pull_request:
     branches:
       - main
@@ -25,9 +25,21 @@ jobs:
       - name: Verify launcher help
         shell: cmd
         run: call launch.cmd --help
-      - name: Set up virtual environment through launcher
+      - name: Auto-setup on first double-click (no arguments)
         shell: cmd
-        run: call launch.cmd --setup-only
+        env:
+          SUPERSUBOI_CI_SKIP_GUI: "1"
+        run: call launch.cmd
+      - name: Reuse prepared environment on subsequent double-click
+        shell: cmd
+        env:
+          SUPERSUBOI_CI_SKIP_GUI: "1"
+        run: call launch.cmd
+      - name: Verify first-run setup artifacts
+        shell: pwsh
+        run: |
+          if (!(Test-Path ".venv/Scripts/python.exe")) { throw "Missing local Python environment" }
+          if (!(Test-Path ".venv/.supersuboi-ready")) { throw "Missing successful setup marker" }
       - name: Verify launcher dependencies
         shell: cmd
         run: call launch.cmd --check
